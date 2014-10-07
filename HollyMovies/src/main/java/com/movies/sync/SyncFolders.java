@@ -1,72 +1,59 @@
 package com.movies.sync;
 
-import com.movies.entities.Movie;
-import com.sun.corba.se.impl.orbutil.concurrent.Sync;
 
-import java.util.HashSet;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 
 /**
  * Created by Rox on 08.09.2014.
  */
+@Component
 public class SyncFolders {
 
-    private static MoviesFolder masterFolder;
+    @Value("#{propFile.masterFolder}")
+    private String pathMaster;
+    private MoviesFolder masterFolder;
 
-    private static MoviesFolder slaveFolder;
+    @Value("#{propFile.slaveFolder}")
+    private String pathSlave;
+    private MoviesFolder slaveFolder;
 
-    private static MoviesFolder moveToMaster;
-
-    private static MoviesFolder moveToSlave;
-
-    private static void initSyncFolders() {
-        masterFolder = new MoviesFolder();
-        slaveFolder  = new MoviesFolder();
-        moveToMaster = new MoviesFolder();
-        moveToSlave = new MoviesFolder();
-        masterFolder.init("C:\\Users\\Rox\\Desktop\\Filme");
-        slaveFolder.init("D:\\MadMaggie\\PIM\\Company\\Safe\\Filme\\1_Fantasia");
-        moveToMaster.init(masterFolder.sourcePath);
-        moveToSlave.init(slaveFolder.sourcePath);
+    public SyncFolders() {
+        this.masterFolder = new MoviesFolder(pathMaster);
+        this.masterFolder.init();
+        this.slaveFolder = new MoviesFolder(pathSlave);
+        this.slaveFolder.init();
     }
 
-    public static void calculateMovedMovies() {
-        initSyncFolders();
-        MoviesFolder tempMoveToMaster = new MoviesFolder();
-        MoviesFolder tempMoveToSlave = new MoviesFolder();
-        tempMoveToMaster.init(masterFolder.sourcePath);
-        tempMoveToSlave.init(slaveFolder.sourcePath);
-        tempMoveToSlave.getFolderList().retainAll(moveToMaster.getFolderList());
-        tempMoveToMaster.getFolderList().retainAll(moveToSlave.getFolderList());
-        tempMoveToSlave  = null;
-        tempMoveToMaster = null;
+    public MoviesFolder getMoveToMaster() {
+        MoviesFolder tempMoveToMaster = new MoviesFolder(pathMaster);
+        tempMoveToMaster.init();
+        tempMoveToMaster.getFolderList().retainAll(slaveFolder.getFolderList());
+        return tempMoveToMaster;
     }
 
-    public static void moveFile() {
-
+    public MoviesFolder getMoveToSlave() {
+        MoviesFolder tempMoveToSlave = new MoviesFolder(pathMaster);
+        tempMoveToSlave.init();
+        tempMoveToSlave.getFolderList().retainAll(masterFolder.getFolderList());
+        return tempMoveToSlave;
     }
 
-    public static void setMasterFolder(MoviesFolder masterFolder) {
-        SyncFolders.masterFolder = masterFolder;
-    }
-
-    public static void setSlaveFolder(MoviesFolder slaveFolder) {
-        SyncFolders.slaveFolder = slaveFolder;
-    }
-
-    public static MoviesFolder getMoveToMaster() {
-        return moveToMaster;
-    }
-
-    public static MoviesFolder getMoveToSlave() {
-        return moveToSlave;
-    }
-
-    public static MoviesFolder getMasterFolder() {
+    public MoviesFolder getMasterFolder() {
         return masterFolder;
     }
 
-    public static MoviesFolder getSlaveFolder() {
+    public MoviesFolder getSlaveFolder() {
         return slaveFolder;
+    }
+
+    public void setPathMaster(String pathMaster) {
+        this.pathMaster = pathMaster;
+    }
+
+    public void setPathSlave(String pathSlave) {
+        this.pathSlave = pathSlave;
     }
 }
 

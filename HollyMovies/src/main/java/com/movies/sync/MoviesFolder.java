@@ -19,8 +19,11 @@ public class MoviesFolder {
 
     HashSet<Movie> folderList = new HashSet<Movie>();
 
-     public void init(String path) {
+     public MoviesFolder(String path) {
         sourcePath = path;
+    }
+
+    public void init() {
         createFileList();
     }
 
