@@ -33,7 +33,7 @@ public class Movie {
     }
     
     public int hashCode() {
-        return (int) title.CharAt(0);
+        return (int) title.charAt(0);
     }
 
     public void writeMovie() {

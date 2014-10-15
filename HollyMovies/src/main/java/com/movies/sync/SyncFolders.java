@@ -1,42 +1,51 @@
 package com.movies.sync;
 
 
+import com.movies.entities.Movie;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 
 /**
  * Created by Rox on 08.09.2014.
  */
 @Component
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SyncFolders {
 
-    @Value("#{propFile.masterFolder}")
+    @Value("#{props.masterFolder}")
     private String pathMaster;
     private Set<Movie> moveToMaster;
 
-    @Value("#{propFile.slaveFolder}")
+    @Value("#{props.slaveFolder}")
     private String pathSlave;
     private Set<Movie> moveToSlave;
 
     public void sync() {
-        initMoveToMaster
+        moveToMaster = FolderUtils.createFolderList(pathMaster, initMoveToMaster());
+        FolderUtils.printFolderSubset("Move to Master Folder: ", moveToMaster);
+        moveToSlave = FolderUtils.createFolderList(pathSlave, initMoveToSlave());
+        FolderUtils.printFolderSubset("Move to Slave Folder: ", moveToSlave);
     }
 
-    public MoviesFolder initMoveToMaster() {
-        return FileUtils.createFolderList(pathToMaster, FileUtils.generateFolderList(pathToMaster));
+    private Set<String> initMoveToMaster() {
+        return FolderUtils.getFolderDifference(pathSlave, pathMaster);
     }
 
-    public MoviesFolder initMoveToSlave() {
-        return FileUtils.createFolderList(pathToMaster, FileUtils.generateFolderList(pathToMaster));
+    private Set<String> initMoveToSlave() {
+        return FolderUtils.getFolderDifference(pathMaster, pathSlave);
     }
 
-    public MoviesFolder getMasterFolder() {
-        return masterFolder;
+    public Set<Movie> getMoveToMaster() {
+        return moveToMaster;
     }
 
-    public MoviesFolder getSlaveFolder() {
-        return slaveFolder;
+    public Set<Movie> getMoveToSlave() {
+        return moveToSlave;
     }
 
     public void setPathMaster(String pathMaster) {
