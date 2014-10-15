@@ -10,31 +10,20 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class MovieTests {
 
-    SyncFolders sync;
+    SyncFolders syncTest;
 
     @Before
     public void generateMovie() {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-config.xml");
-        sync = context.getBean(SyncFolders.class);
-    }
-
-    public void displaySyncMovieFolders(int displayCounter) {
-        System.out.println(displayCounter + "--------------------------------------");
-        sync.getMasterFolder().printFileList();
-        System.out.println("---------------------------------------------");
-        sync.getSlaveFolder().printFileList();
-   }
-
-    public void displaySyncToBeMoved(int displayCounter) {
-        System.out.println(displayCounter + "--------------------------------------");
-        sync.getMoveToMaster().printFileList();
-        System.out.println("---------------------------------------------");
-        sync.getMoveToSlave().printFileList();
+        syncTest = context.getBean(SyncFolders.class);
     }
 
     @Test
     public void calculateToBeMoved() {
-        displaySyncMovieFolders(1);
-        displaySyncToBeMoved(2);
+        syncTest.sync();
+        int result1 = syncTest.getMoveToMaster().size();
+        assertEquals(2, result1);
+        int result2 = syncTest.getMoveToSlave().size();
+        assertEquals(2, result2);
     }
 }
