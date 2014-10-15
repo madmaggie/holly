@@ -13,31 +13,22 @@ public class SyncFolders {
 
     @Value("#{propFile.masterFolder}")
     private String pathMaster;
-    private MoviesFolder masterFolder;
+    private Set<Movie> moveToMaster;
 
     @Value("#{propFile.slaveFolder}")
     private String pathSlave;
-    private MoviesFolder slaveFolder;
+    private Set<Movie> moveToSlave;
 
-    public SyncFolders() {
-        this.masterFolder = new MoviesFolder(pathMaster);
-        this.masterFolder.init();
-        this.slaveFolder = new MoviesFolder(pathSlave);
-        this.slaveFolder.init();
+    public void sync() {
+        initMoveToMaster
     }
 
-    public MoviesFolder getMoveToMaster() {
-        MoviesFolder tempMoveToMaster = new MoviesFolder(pathMaster);
-        tempMoveToMaster.init();
-        tempMoveToMaster.getFolderList().retainAll(slaveFolder.getFolderList());
-        return tempMoveToMaster;
+    public MoviesFolder initMoveToMaster() {
+        return FileUtils.createFolderList(pathToMaster, FileUtils.generateFolderList(pathToMaster));
     }
 
-    public MoviesFolder getMoveToSlave() {
-        MoviesFolder tempMoveToSlave = new MoviesFolder(pathMaster);
-        tempMoveToSlave.init();
-        tempMoveToSlave.getFolderList().retainAll(masterFolder.getFolderList());
-        return tempMoveToSlave;
+    public MoviesFolder initMoveToSlave() {
+        return FileUtils.createFolderList(pathToMaster, FileUtils.generateFolderList(pathToMaster));
     }
 
     public MoviesFolder getMasterFolder() {
